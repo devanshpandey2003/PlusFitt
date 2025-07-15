@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # Next.js Application
+  pulsefit-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+    volumes:
+      # For development, mount source code
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - postgres
+    networks:
+      - pulsefit-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: pulsefit
+      POSTGRES_USER: pulsefit_user
+      POSTGRES_PASSWORD: pulsefit_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - pulsefit-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pulsefit_user -d pulsefit"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nginx Reverse Proxy (Optional)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - pulsefit-app
+    networks:
+      - pulsefit-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  pulsefit-network:
+    driver: bridge
