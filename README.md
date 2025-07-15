@@ -7,7 +7,7 @@ It provides an intuitive platform to explore fitness plans, wellness tips, and p
 
 This project was fully designed and developed from scratch, ensuring a seamless and optimized user experience.
 
-**Live Demo:** [https://plus-fitt.vercel.app](https://plus-fitt.vercel.app)
+[**Live Demo:**](https://plus-fitt.vercel.app)
 
 ✨ Features
 ✅ Responsive UI – Works smoothly on mobile, tablet, and desktop
@@ -51,7 +51,7 @@ pulsefit-web-app/
 🖥 Deployment
 The live version is hosted here:
 
-PulseFit on Vercel [https://plus-fitt.vercel.app](https://plus-fitt.vercel.app)
+[PulseFit on Vercel](https://plus-fitt.vercel.app)
 
 Each push to the main branch automatically triggers a new deployment.
 
